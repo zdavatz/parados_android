@@ -86,7 +86,10 @@ class GameActivity : AppCompatActivity() {
             }
 
             override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-                showFabTemporarily()
+                // Only show back button when tapping in the top-left corner
+                if (e.x < 150 && e.y < 150) {
+                    showFabTemporarily()
+                }
                 return false
             }
         })
