@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Parados" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">#263238</item>
+        <item name="colorPrimaryContainer">#37474F</item>
+        <item name="colorOnPrimary">#ECEFF1</item>
+        <item name="colorSecondary">#FFD700</item>
+        <item name="android:statusBarColor">#263238</item>
+        <item name="android:navigationBarColor">#263238</item>
+    </style>
+
+    <style name="Theme.Parados.Fullscreen">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:statusBarColor">#00000000</item>
+        <item name="android:navigationBarColor">#00000000</item>
+    </style>
+
+    <style name="ToolbarTitle" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textSize">24sp</item>
+        <item name="android:letterSpacing">0.15</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+</resources>

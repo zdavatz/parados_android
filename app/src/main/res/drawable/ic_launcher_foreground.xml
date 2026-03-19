@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Background circle -->
+    <path
+        android:fillColor="#263238"
+        android:pathData="M54,54m-40,0a40,40 0,1 1,80 0a40,40 0,1 1,-80 0" />
+
+    <!-- P letter for Parados -->
+    <path
+        android:fillColor="#FFD700"
+        android:pathData="M38,32h12c7.7,0 14,6.3 14,14s-6.3,14 -14,14h-6v16h-6zM44,38v16h6c4.4,0 8,-3.6 8,-8s-3.6,-8 -8,-8z" />
+
+</vector>
