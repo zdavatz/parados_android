@@ -26,7 +26,8 @@ APK output: `app/build/outputs/apk/debug/app-debug.apk`
 
 ## Architecture
 
-- **Two Activities**: `MainActivity` (game list with RecyclerView) → `GameActivity` (full-screen WebView with floating back button)
+- **Two Activities** (both `singleTop`): `MainActivity` (game list with RecyclerView) → `GameActivity` (full-screen WebView). Navigation uses `FLAG_ACTIVITY_REORDER_TO_FRONT` to preserve game state — GameActivity is not finished when returning to menu
+- **Back button**: Auto-hides after 3s with fade-out, reappears on tap. Left-edge swipe also returns to menu
 - **GameRepository**: Copies bundled HTML from `assets/games/` to internal storage; re-copies when `versionCode` changes; handles GitHub update downloads
 - **GameInfo**: Hardcoded game catalog with titles, descriptions, and language/mode variants
 - **GameAdapter**: RecyclerView adapter rendering game cards with equally-sized colored variant buttons
