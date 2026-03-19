@@ -25,6 +25,7 @@ class GameActivity : AppCompatActivity() {
     private lateinit var fabBack: FloatingActionButton
     private val handler = Handler(Looper.getMainLooper())
     private val hideDelay = 3000L
+    private var currentFilename: String? = null
 
     private val hideFab = Runnable {
         val fadeOut = AlphaAnimation(1f, 0f).apply { duration = 400; fillAfter = true }
@@ -71,13 +72,11 @@ class GameActivity : AppCompatActivity() {
         webView.webViewClient = WebViewClient()
         webView.webChromeClient = WebChromeClient()
 
-        // Swipe gesture detection on the WebView
         val gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
             override fun onFling(e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
                 if (e1 == null) return false
                 val dx = e2.x - e1.x
                 val dy = e2.y - e1.y
-                // Left-to-right swipe from the left edge (start within 80px)
                 if (e1.x < 80 && dx > 120 && abs(dy) < abs(dx) && velocityX > 300) {
                     goBackToMenu()
                     return true
@@ -86,7 +85,6 @@ class GameActivity : AppCompatActivity() {
             }
 
             override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-                // Only show back button when tapping in the top-left corner
                 if (e.x < 150 && e.y < 150) {
                     showFabTemporarily()
                 }
@@ -94,17 +92,33 @@ class GameActivity : AppCompatActivity() {
             }
         })
 
-        webView.setOnTouchListener { v, event ->
+        webView.setOnTouchListener { _, event ->
             gestureDetector.onTouchEvent(event)
-            false // Let WebView handle the touch too
+            false
         }
 
+        loadGame(intent)
+        handler.postDelayed(hideFab, hideDelay)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        val newFilename = intent.getStringExtra("filename") ?: "index.html"
+        // Only reload if it's a different game
+        if (newFilename != currentFilename) {
+            loadGame(intent)
+        }
+        // Otherwise: same game, keep WebView state as-is
+        hideSystemBars()
+        showFabTemporarily()
+    }
+
+    private fun loadGame(intent: Intent) {
         val filename = intent.getStringExtra("filename") ?: "index.html"
+        currentFilename = filename
         val repository = GameRepository(this)
         webView.loadUrl(repository.getGameUri(filename))
-
-        // Auto-hide the back button after initial delay
-        handler.postDelayed(hideFab, hideDelay)
     }
 
     private fun hideSystemBars() {

@@ -24,7 +24,7 @@
             android:name=".GameActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|layoutDirection"
             android:theme="@style/Theme.Parados.Fullscreen"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTask" />
 
     </application>
 

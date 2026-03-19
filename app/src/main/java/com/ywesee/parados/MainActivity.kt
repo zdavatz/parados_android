@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
     private fun launchGame(filename: String) {
         val intent = Intent(this, GameActivity::class.java)
         intent.putExtra("filename", filename)
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         startActivity(intent)
     }
 
