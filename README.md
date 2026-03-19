@@ -5,7 +5,8 @@ Android App für die [Parados Board Games](https://game.ywesee.com/parados/) von
 ## Features
 
 - Alle Parados-Spiele nativ auf Android spielbar (WebView)
-- Offline-Gameplay — kein Internet nötig (ausser für Remote-Multiplayer)
+- Offline-Gameplay — kein Internet nötig
+- Remote-Multiplayer-Spiele öffnen im System-Browser (PeerJS/WebRTC benötigt HTTPS)
 - Spiele-Updates direkt von GitHub via Menü
 - Optimiert für verschiedene Android-Bildschirmgrössen
 - Vollbild-Modus beim Spielen — Zurück-Button blendet sich nach 3s aus, Tap zum Einblenden

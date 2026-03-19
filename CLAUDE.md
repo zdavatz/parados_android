@@ -29,10 +29,10 @@ APK output: `app/build/outputs/apk/debug/app-debug.apk`
 - **Two Activities** (both `singleTop`): `MainActivity` (game list with RecyclerView) → `GameActivity` (full-screen WebView). Navigation uses `FLAG_ACTIVITY_REORDER_TO_FRONT` to preserve game state — GameActivity is not finished when returning to menu
 - **Back button**: Auto-hides after 3s with fade-out, reappears on tap. Left-edge swipe also returns to menu
 - **GameRepository**: Copies bundled HTML from `assets/games/` to internal storage; re-copies when `versionCode` changes; handles GitHub update downloads
-- **GameInfo**: Hardcoded game catalog with titles, descriptions, and language/mode variants
+- **GameInfo**: Hardcoded game catalog with titles, descriptions, and language/mode variants. Remote variants use `GameVariant.url` to open in system browser
 - **GameAdapter**: RecyclerView adapter rendering game cards with equally-sized colored variant buttons
 - **Offline-first**: Games run locally via `file://` URIs. Internet only needed for "Spiele aktualisieren" (menu) which fetches from `raw.githubusercontent.com/zdavatz/parados/main/`
-- **Remote multiplayer games** (democracy_remote, makalaina_remote, rainbow_blackjack_remote) need internet during gameplay
+- **Remote multiplayer**: Remote variants (democracy_remote, makalaina_remote, rainbow_blackjack_remote) open in the system browser at `game.ywesee.com/parados/` because PeerJS/WebRTC requires HTTPS and won't work in a `file://` WebView
 
 ## Key Design Decisions
 

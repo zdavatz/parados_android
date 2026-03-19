@@ -1,6 +1,8 @@
 package com.ywesee.parados
 
+import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,7 +50,14 @@ class GameAdapter(
             game.variants.forEachIndexed { index, variant ->
                 val color = buttonColors[index % buttonColors.size]
                 val btn = createButton(holder.itemView.context, variant.label, color, count)
-                btn.setOnClickListener { onGameClick(variant.filename) }
+                btn.setOnClickListener {
+                    if (variant.url != null) {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(variant.url))
+                        holder.itemView.context.startActivity(intent)
+                    } else {
+                        onGameClick(variant.filename)
+                    }
+                }
                 holder.buttonsContainer.addView(btn)
                 // Remove right margin from last button
                 if (index == count - 1) {
