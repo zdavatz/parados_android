@@ -36,3 +36,4 @@ APK output: `app/build/outputs/apk/debug/app-debug.apk`
 - Game catalog is hardcoded in `GameInfo.kt` (not parsed from index.html) — update this file when adding new games
 - No third-party HTTP library — uses `HttpURLConnection` for GitHub downloads
 - minSdk 24, targetSdk 34, package `com.ywesee.parados`
+- Game HTML files must have `<meta name="viewport">` and use responsive sizing (not fixed px) to work well on Android screens — see `divided_loyalties.html` for the pattern using CSS variables and JS-based `calcCellSize()`
