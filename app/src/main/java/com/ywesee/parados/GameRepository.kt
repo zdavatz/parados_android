@@ -1,6 +1,7 @@
 package com.ywesee.parados
 
 import android.content.Context
+import android.content.pm.PackageManager
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
@@ -11,9 +12,14 @@ class GameRepository(private val context: Context) {
     private val prefs = context.getSharedPreferences("parados_prefs", Context.MODE_PRIVATE)
 
     fun ensureGamesInstalled() {
-        if (prefs.getBoolean("assets_copied", false) && gamesDir.exists()) return
+        val currentVersion = try {
+            context.packageManager.getPackageInfo(context.packageName, 0).versionCode
+        } catch (_: PackageManager.NameNotFoundException) { 1 }
+
+        val installedVersion = prefs.getInt("assets_version", 0)
+        if (installedVersion >= currentVersion && gamesDir.exists()) return
         copyAssetsToInternal()
-        prefs.edit().putBoolean("assets_copied", true).apply()
+        prefs.edit().putInt("assets_version", currentVersion).apply()
     }
 
     private fun copyAssetsToInternal() {
