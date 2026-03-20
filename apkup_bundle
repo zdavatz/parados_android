@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+
+cd /home/zdavatz/software/parados_android
+./gradlew clean
+./gradlew bundleRelease
+
+cd /home/zdavatz/software/android-bundle-uploader
+python3 -m venv env
+env/bin/pip install google-api-python-client oauth2client httplib2
+env/bin/python3 main.py ../parados_android/parados.json com.ywesee.parados /home/zdavatz/software/parados_android/app/build/outputs/bundle/release/app-release.aab production

@@ -24,10 +24,41 @@ Android App für die [Parados Board Games](https://game.ywesee.com/parados/) von
 - **Rainbow Blackjack** (DE, EN, Remote)
 - **MAKA LAINA** (Local, Remote)
 
+## Screenshots
+
+| Game List | DUK Kangaroo | Capovolto |
+|-----------|-------------|-----------|
+| ![Game List](screenshots/01_game_list.png) | ![Kangaroo](screenshots/02_kangaroo_game.png) | ![Capovolto](screenshots/03_capovolto_game.png) |
+
+| Divided Loyalties | MAKA LAINA | Frankenstein |
+|-------------------|------------|--------------|
+| ![Divided Loyalties](screenshots/04_divided_loyalties_game.png) | ![MAKA LAINA](screenshots/05_makalaina_game.png) | ![Frankenstein](screenshots/06_frankenstein_game.png) |
+
 ## Build
 
 ```bash
+# Debug build
 ANDROID_HOME=~/Android/Sdk ./gradlew assembleDebug
+
+# Release bundle (for Google Play)
+ANDROID_HOME=~/Android/Sdk ./gradlew bundleRelease
+```
+
+## Release & Upload
+
+Release signing is configured via `signing.properties` (not tracked in git):
+
+```properties
+STORE_FILE=privateKeyParados.store
+STORE_PASSWORD=your_password
+KEY_ALIAS=your_alias
+KEY_PASSWORD=your_key_password
+```
+
+Upload to Google Play:
+
+```bash
+./apkup_bundle
 ```
 
 ## Lizenz

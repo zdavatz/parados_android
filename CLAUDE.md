@@ -15,14 +15,22 @@ ANDROID_HOME=~/Android/Sdk ./gradlew assembleDebug
 # Install on connected device
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 
-# Release build
-ANDROID_HOME=~/Android/Sdk ./gradlew assembleRelease
+# Release bundle (for Google Play)
+ANDROID_HOME=~/Android/Sdk ./gradlew bundleRelease
+
+# Upload to Google Play
+./apkup_bundle
 
 # Clean
 ANDROID_HOME=~/Android/Sdk ./gradlew clean
 ```
 
 APK output: `app/build/outputs/apk/debug/app-debug.apk`
+AAB output: `app/build/outputs/bundle/release/app-release.aab`
+
+## Release Signing
+
+Release signing uses `signing.properties` (gitignored) with `STORE_FILE`, `STORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`. The keystore file and Google Play service account JSON (`parados.json`) are also gitignored. The `apkup_bundle` script builds the AAB and uploads via `android-bundle-uploader`.
 
 ## Architecture
 
