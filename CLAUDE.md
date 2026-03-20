@@ -48,7 +48,7 @@ Release signing uses `signing.properties` (gitignored) with `STORE_FILE`, `STORE
 - Assets are re-copied whenever `versionCode` in `build.gradle.kts` is bumped — so always increment `versionCode` when updating bundled HTML files
 - Game catalog is hardcoded in `GameInfo.kt` (not parsed from index.html) — update this file when adding new games
 - No third-party HTTP library — uses `HttpURLConnection` for GitHub downloads
-- minSdk 24, targetSdk 34, package `com.ywesee.parados`
+- minSdk 24, targetSdk 35, package `com.ywesee.parados`
 - Game HTML files must have `<meta name="viewport">` and use responsive sizing (CSS variables + JS `calcCellSize()`) — see `divided_loyalties.html` and `makalaina.html` for the pattern
 - App icon uses the kangaroo image (kangy.jpg) from the iOS project, generated as PNG at all Android mipmap densities. Adaptive icon uses PNG foreground (`@mipmap/ic_launcher_foreground`) with a beige background (`#F5F0E8`)
 - Google Play Store icon (512×512) is at `screenshots/play_store_icon_512x512.png`, generated from the xxxhdpi foreground on beige background

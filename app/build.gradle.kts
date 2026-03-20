@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.ywesee.parados"
-    compileSdk = 34
+    compileSdk = 35
 
     signingConfigs {
         create("release")
@@ -17,8 +17,8 @@ android {
     defaultConfig {
         applicationId = "com.ywesee.parados"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 6
+        targetSdk = 35
+        versionCode = 7
         versionName = "1.5"
     }
 
