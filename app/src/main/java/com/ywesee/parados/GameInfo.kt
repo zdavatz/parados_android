@@ -45,7 +45,7 @@ data class GameInfo(
                 title = "Democracy in Space",
                 players = "2+ Players \u00b7 Strategy",
                 variants = listOf(
-                    GameVariant("democracy.html", "Local"),
+                    GameVariant("democracy.html", "Play"),
                     GameVariant("democracy_remote.html", "Remote", url = "https://game.ywesee.com/parados/democracy_remote.html")
                 ),
                 description = "Based on the concept of the US Electoral College (parliamentary systems also have it). Area majority culled to its essence. A gentle opening suddenly transforms into a nail biting race to the finish! The tie breaker condition needs to be kept in mind, but you won't know for a while if you'll need it this time...."
@@ -73,7 +73,7 @@ data class GameInfo(
                 players = "2 Players \u00b7 Strategy",
                 description = "It's the first turn and the battle is on! No time to get warmed up in MakaLaina:-) You need to be planning from the get go, evolving your long term strategy \u2014 but staying flexible. The constant influx of new discs means that even a small shift can have consequences...",
                 variants = listOf(
-                    GameVariant("makalaina.html", "Local"),
+                    GameVariant("makalaina.html", "Play"),
                     GameVariant("makalaina_remote.html", "Remote", url = "https://game.ywesee.com/parados/makalaina_remote.html")
                 )
             )
