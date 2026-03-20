@@ -41,11 +41,12 @@ data class GameInfo(
                 description = "Many turns are offensive AND defensive and each one may have long term consequences! It's connect 4, but with 6 colours. Your colour is always loyal to you, your opponent's never is... and the other 4? Sometimes they are, and sometimes they aren't. Tiles can even be loyal in one direction, AND disloyal in another! Not for the faint of heart...."
             ),
             GameInfo(
-                filename = "democracy_remote.html",
+                filename = "democracy.html",
                 title = "Democracy in Space",
-                players = "2+ Players \u00b7 Remote Multiplayer",
+                players = "2+ Players \u00b7 Strategy",
                 variants = listOf(
-                    GameVariant("democracy_remote.html", "Play", url = "https://game.ywesee.com/parados/democracy_remote.html")
+                    GameVariant("democracy.html", "Local"),
+                    GameVariant("democracy_remote.html", "Remote", url = "https://game.ywesee.com/parados/democracy_remote.html")
                 ),
                 description = "Based on the concept of the US Electoral College (parliamentary systems also have it). Area majority culled to its essence. A gentle opening suddenly transforms into a nail biting race to the finish! The tie breaker condition needs to be kept in mind, but you won't know for a while if you'll need it this time...."
             ),
@@ -85,7 +86,7 @@ data class GameInfo(
                 "kangaroo_cn.html", "kangaroo_ua.html",
                 "capovolto.html",
                 "divided_loyalties.html",
-                "democracy_remote.html",
+                "democracy.html", "democracy_remote.html",
                 "frankenstein.html",
                 "rainbow_blackjack.html", "rainbow_blackjack_en.html",
                 "rainbow_blackjack_remote.html",

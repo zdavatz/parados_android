@@ -32,7 +32,7 @@ APK output: `app/build/outputs/apk/debug/app-debug.apk`
 - **GameInfo**: Hardcoded game catalog with titles, descriptions, and language/mode variants. Remote variants use `GameVariant.url` to open in system browser
 - **GameAdapter**: RecyclerView adapter rendering game cards with equally-sized colored variant buttons
 - **Offline-first**: Games run locally via `file://` URIs. Internet only needed for "Spiele aktualisieren" (menu) which fetches from `raw.githubusercontent.com/zdavatz/parados/main/`
-- **Remote multiplayer**: Remote variants (democracy_remote, makalaina_remote, rainbow_blackjack_remote) open in the system browser at `game.ywesee.com/parados/` because PeerJS/WebRTC requires HTTPS and won't work in a `file://` WebView
+- **Remote multiplayer**: Remote variants (democracy_remote, makalaina_remote, rainbow_blackjack_remote) open in the system browser at `game.ywesee.com/parados/` because PeerJS/WebRTC requires HTTPS and won't work in a `file://` WebView. Games with both local and remote variants (Democracy in Space, MAKA LAINA, Rainbow Blackjack) show separate buttons for each mode
 
 ## Key Design Decisions
 

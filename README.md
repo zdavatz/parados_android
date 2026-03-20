@@ -18,7 +18,7 @@ Android App für die [Parados Board Games](https://game.ywesee.com/parados/) von
 - **DUK — The Impatient Kangaroo** (DE, EN, JP, CN, UA)
 - **Capovolto** — Othello on steroids
 - **Divided Loyalties** — Connect 4 mit 6 Farben
-- **Democracy in Space** — Remote Multiplayer
+- **Democracy in Space** (Local, Remote)
 - **Frankenstein** — Memory für 1–4 Spieler
 - **Rainbow Blackjack** (DE, EN, Remote)
 - **MAKA LAINA** (Local, Remote)
