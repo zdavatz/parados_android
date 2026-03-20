@@ -42,3 +42,4 @@ APK output: `app/build/outputs/apk/debug/app-debug.apk`
 - No third-party HTTP library — uses `HttpURLConnection` for GitHub downloads
 - minSdk 24, targetSdk 34, package `com.ywesee.parados`
 - Game HTML files must have `<meta name="viewport">` and use responsive sizing (CSS variables + JS `calcCellSize()`) — see `divided_loyalties.html` and `makalaina.html` for the pattern
+- App icon uses the kangaroo image (kangy.jpg) from the iOS project, generated as PNG at all Android mipmap densities. Adaptive icon uses PNG foreground (`@mipmap/ic_launcher_foreground`) with a beige background (`#F5F0E8`)
