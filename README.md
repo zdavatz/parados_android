@@ -24,6 +24,11 @@ Android App für die [Parados Board Games](https://game.ywesee.com/parados/) von
 - **Rainbow Blackjack** (DE, EN, Remote)
 - **MAKA LAINA** (Local, Remote)
 
+## Google Play
+
+- **Play Store Icon**: `screenshots/play_store_icon_512x512.png` (512×512, kangaroo on beige background)
+- **Package**: `com.ywesee.parados`
+
 ## Screenshots
 
 | Game List | DUK Kangaroo | Capovolto |
