@@ -41,6 +41,8 @@ Release signing uses `signing.properties` (gitignored) with `STORE_FILE`, `STORE
 - **GameAdapter**: RecyclerView adapter rendering game cards with equally-sized colored variant buttons
 - **Offline-first**: Games run locally via `file://` URIs. Internet only needed for "Spiele aktualisieren" (menu) which fetches from `raw.githubusercontent.com/zdavatz/parados/main/`
 - **Remote multiplayer**: Remote variants (democracy_remote, makalaina_remote, rainbow_blackjack_remote) open in the system browser at `game.ywesee.com/parados/` because PeerJS/WebRTC requires HTTPS and won't work in a `file://` WebView. Games with both local and remote variants (Democracy in Space, MAKA LAINA, Rainbow Blackjack) show separate buttons for each mode
+- **CSV export**: Injected JS intercepts `<a download>` blob clicks and routes CSV data through a `JavascriptInterface` bridge (`AndroidCsvExport`) to share via Android's Share Sheet using `FileProvider`
+- **CSV import**: `WebChromeClient.onShowFileChooser` delegates to `ActivityResultLauncher` so games can open a file picker to load CSV files
 
 ## Key Design Decisions
 
@@ -52,3 +54,4 @@ Release signing uses `signing.properties` (gitignored) with `STORE_FILE`, `STORE
 - Game HTML files must have `<meta name="viewport">` and use responsive sizing (CSS variables + JS `calcCellSize()`) — see `divided_loyalties.html` and `makalaina.html` for the pattern
 - App icon uses the kangaroo image (kangy.jpg) from the iOS project, generated as PNG at all Android mipmap densities. Adaptive icon uses PNG foreground (`@mipmap/ic_launcher_foreground`) with a beige background (`#F5F0E8`)
 - Google Play Store icon (512×512) is at `screenshots/play_store_icon_512x512.png`, generated from the xxxhdpi foreground on beige background
+- CSV export uses `FileProvider` with cache directory (`csv_exports/`) — config in `res/xml/file_paths.xml` and declared in `AndroidManifest.xml`

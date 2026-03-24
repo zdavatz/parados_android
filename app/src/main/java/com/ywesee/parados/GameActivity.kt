@@ -2,6 +2,7 @@ package com.ywesee.parados
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -12,11 +13,17 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.view.animation.AlphaAnimation
+import android.webkit.JavascriptInterface
+import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.io.File
 import kotlin.math.abs
 
 class GameActivity : AppCompatActivity() {
@@ -26,6 +33,10 @@ class GameActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private val hideDelay = 3000L
     private var currentFilename: String? = null
+
+    // CSV import: file chooser callback
+    private var fileUploadCallback: ValueCallback<Array<Uri>>? = null
+    private lateinit var fileChooserLauncher: ActivityResultLauncher<Intent>
 
     private val hideFab = Runnable {
         val fadeOut = AlphaAnimation(1f, 0f).apply { duration = 400; fillAfter = true }
@@ -54,6 +65,17 @@ class GameActivity : AppCompatActivity() {
 
         hideSystemBars()
 
+        // Register file chooser launcher for CSV import
+        fileChooserLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            val uri = if (result.resultCode == RESULT_OK) {
+                result.data?.data?.let { arrayOf(it) }
+            } else null
+            fileUploadCallback?.onReceiveValue(uri)
+            fileUploadCallback = null
+        }
+
         fabBack = findViewById(R.id.fab_back)
         fabBack.setOnClickListener { goBackToMenu() }
 
@@ -69,8 +91,35 @@ class GameActivity : AppCompatActivity() {
             displayZoomControls = false
         }
 
-        webView.webViewClient = WebViewClient()
-        webView.webChromeClient = WebChromeClient()
+        // Add JavaScript interface for CSV export
+        webView.addJavascriptInterface(CsvExportBridge(), "AndroidCsvExport")
+
+        webView.webViewClient = object : WebViewClient() {
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+                // Inject JS to intercept blob download links (CSV export)
+                view?.evaluateJavascript(INJECTED_JS, null)
+            }
+        }
+
+        // WebChromeClient with file chooser support for CSV import
+        webView.webChromeClient = object : WebChromeClient() {
+            override fun onShowFileChooser(
+                webView: WebView?,
+                filePathCallback: ValueCallback<Array<Uri>>?,
+                fileChooserParams: FileChooserParams?
+            ): Boolean {
+                fileUploadCallback?.onReceiveValue(null)
+                fileUploadCallback = filePathCallback
+
+                val intent = fileChooserParams?.createIntent() ?: Intent(Intent.ACTION_GET_CONTENT).apply {
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                    type = "*/*"
+                }
+                fileChooserLauncher.launch(intent)
+                return true
+            }
+        }
 
         val gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
             override fun onFling(e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
@@ -158,5 +207,59 @@ class GameActivity : AppCompatActivity() {
     override fun onDestroy() {
         handler.removeCallbacks(hideFab)
         super.onDestroy()
+    }
+
+    /** JavaScript interface to receive CSV data from the WebView */
+    inner class CsvExportBridge {
+        @JavascriptInterface
+        fun exportCsv(filename: String, content: String) {
+            runOnUiThread {
+                shareCsvFile(filename, content)
+            }
+        }
+    }
+
+    private fun shareCsvFile(filename: String, content: String) {
+        val csvDir = File(cacheDir, "csv_exports")
+        csvDir.mkdirs()
+        val csvFile = File(csvDir, filename)
+        csvFile.writeText(content)
+
+        val uri = FileProvider.getUriForFile(
+            this,
+            "${packageName}.fileprovider",
+            csvFile
+        )
+
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/csv"
+            putExtra(Intent.EXTRA_STREAM, uri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        startActivity(Intent.createChooser(shareIntent, filename))
+    }
+
+    companion object {
+        /**
+         * Injected JavaScript that intercepts <a download> blob clicks
+         * and routes them through the Android bridge for sharing.
+         */
+        private const val INJECTED_JS = """
+            (function() {
+                if (window.__androidCsvBridgeInstalled) return;
+                window.__androidCsvBridgeInstalled = true;
+                var _origClick = HTMLAnchorElement.prototype.click;
+                HTMLAnchorElement.prototype.click = function() {
+                    if (this.hasAttribute('download') && this.href && this.href.startsWith('blob:')) {
+                        var filename = this.getAttribute('download') || 'export.csv';
+                        fetch(this.href).then(function(r) { return r.text(); }).then(function(text) {
+                            AndroidCsvExport.exportCsv(filename, text);
+                        });
+                        return;
+                    }
+                    _origClick.call(this);
+                };
+            })();
+        """
     }
 }

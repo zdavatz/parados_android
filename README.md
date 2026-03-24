@@ -12,6 +12,8 @@ Android App für die [Parados Board Games](https://game.ywesee.com/parados/) von
 - Vollbild-Modus beim Spielen — Zurück-Button blendet sich nach 3s aus, Tap zum Einblenden
 - Swipe vom linken Rand nach rechts zum Zurückkehren ins Menü
 - Spielstand bleibt erhalten beim Wechsel ins Menü
+- CSV-Export: Spieldaten als CSV-Datei teilen (via Android Share Sheet)
+- CSV-Import: CSV-Dateien direkt im Spiel laden (via File Chooser)
 - App-Icon: Känguru (kangy) — identisch mit der iOS-Version
 
 ## Spiele
