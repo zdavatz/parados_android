@@ -18,7 +18,7 @@ android {
         applicationId = "com.ywesee.parados"
         minSdk = 24
         targetSdk = 35
-        versionCode = 8
+        versionCode = 9
         versionName = "1.6"
     }
 
