@@ -30,7 +30,7 @@ AAB output: `app/build/outputs/bundle/release/app-release.aab`
 
 ## Release Signing
 
-Release signing uses `signing.properties` (gitignored) with `STORE_FILE`, `STORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`. The keystore file and Google Play service account JSON (`parados.json`) are also gitignored. The `apkup_bundle` script builds the AAB and uploads via `android-bundle-uploader`.
+Release signing uses `signing.properties` (gitignored) with `STORE_FILE`, `STORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`. The keystore file and Google Play service account JSON (`parados.json`) are also gitignored. The `apkup_bundle` script builds the AAB and uploads via `android-bundle-uploader` directly as a completed production release (no manual approval needed in Play Console).
 
 ## Architecture
 

@@ -62,7 +62,7 @@ KEY_ALIAS=your_alias
 KEY_PASSWORD=your_key_password
 ```
 
-Upload to Google Play:
+Upload to Google Play (publishes directly as a production release):
 
 ```bash
 ./apkup_bundle
