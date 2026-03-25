@@ -18,8 +18,8 @@ android {
         applicationId = "com.ywesee.parados"
         minSdk = 24
         targetSdk = 35
-        versionCode = 9
-        versionName = "1.6"
+        versionCode = 10
+        versionName = "1.7"
     }
 
     buildTypes {

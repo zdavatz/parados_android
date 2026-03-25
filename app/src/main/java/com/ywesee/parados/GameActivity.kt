@@ -18,6 +18,7 @@ import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.FrameLayout
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -28,11 +29,15 @@ import kotlin.math.abs
 
 class GameActivity : AppCompatActivity() {
 
-    private lateinit var webView: WebView
+    private lateinit var container: FrameLayout
     private lateinit var fabBack: FloatingActionButton
     private val handler = Handler(Looper.getMainLooper())
     private val hideDelay = 3000L
     private var currentFilename: String? = null
+
+    // One WebView per game, keyed by filename
+    private val webViews = mutableMapOf<String, WebView>()
+    private var activeWebView: WebView? = null
 
     // CSV import: file chooser callback
     private var fileUploadCallback: ValueCallback<Array<Uri>>? = null
@@ -76,11 +81,53 @@ class GameActivity : AppCompatActivity() {
             fileUploadCallback = null
         }
 
+        container = findViewById(R.id.webview_container)
         fabBack = findViewById(R.id.fab_back)
         fabBack.setOnClickListener { goBackToMenu() }
 
-        webView = findViewById(R.id.game_webview)
-        webView.settings.apply {
+        loadGame(intent)
+        handler.postDelayed(hideFab, hideDelay)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        val newFilename = intent.getStringExtra("filename") ?: "index.html"
+        if (newFilename != currentFilename) {
+            loadGame(intent)
+        }
+        hideSystemBars()
+        showFabTemporarily()
+    }
+
+    @SuppressLint("SetJavaScriptEnabled", "ClickableViewAccessibility")
+    private fun loadGame(intent: Intent) {
+        val filename = intent.getStringExtra("filename") ?: "index.html"
+        currentFilename = filename
+
+        // Hide current WebView
+        activeWebView?.visibility = View.GONE
+
+        // Reuse existing WebView or create a new one
+        val webView = webViews.getOrPut(filename) {
+            createWebView().also { wv ->
+                container.addView(wv, 0, FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT
+                ))
+                val repository = GameRepository(this)
+                wv.loadUrl(repository.getGameUri(filename))
+            }
+        }
+
+        webView.visibility = View.VISIBLE
+        activeWebView = webView
+    }
+
+    @SuppressLint("SetJavaScriptEnabled", "ClickableViewAccessibility")
+    private fun createWebView(): WebView {
+        val wv = WebView(this)
+        wv.settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true
             allowFileAccess = true
@@ -91,19 +138,16 @@ class GameActivity : AppCompatActivity() {
             displayZoomControls = false
         }
 
-        // Add JavaScript interface for CSV export
-        webView.addJavascriptInterface(CsvExportBridge(), "AndroidCsvExport")
+        wv.addJavascriptInterface(CsvExportBridge(), "AndroidCsvExport")
 
-        webView.webViewClient = object : WebViewClient() {
+        wv.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
-                // Inject JS to intercept blob download links (CSV export)
                 view?.evaluateJavascript(INJECTED_JS, null)
             }
         }
 
-        // WebChromeClient with file chooser support for CSV import
-        webView.webChromeClient = object : WebChromeClient() {
+        wv.webChromeClient = object : WebChromeClient() {
             override fun onShowFileChooser(
                 webView: WebView?,
                 filePathCallback: ValueCallback<Array<Uri>>?,
@@ -141,39 +185,19 @@ class GameActivity : AppCompatActivity() {
             }
         })
 
-        webView.setOnTouchListener { _, event ->
+        wv.setOnTouchListener { _, event ->
             gestureDetector.onTouchEvent(event)
             false
         }
 
-        loadGame(intent)
-        handler.postDelayed(hideFab, hideDelay)
-    }
-
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        setIntent(intent)
-        val newFilename = intent.getStringExtra("filename") ?: "index.html"
-        // Only reload if it's a different game
-        if (newFilename != currentFilename) {
-            loadGame(intent)
-        }
-        // Otherwise: same game, keep WebView state as-is
-        hideSystemBars()
-        showFabTemporarily()
-    }
-
-    private fun loadGame(intent: Intent) {
-        val filename = intent.getStringExtra("filename") ?: "index.html"
-        currentFilename = filename
-        val repository = GameRepository(this)
-        webView.loadUrl(repository.getGameUri(filename))
+        return wv
     }
 
     private fun hideSystemBars() {
+        // Hide navigation bar but keep status bar visible so games don't run into the top
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.let {
-                it.hide(WindowInsets.Type.systemBars())
+                it.hide(WindowInsets.Type.navigationBars())
                 it.systemBarsBehavior =
                     WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
@@ -181,21 +205,35 @@ class GameActivity : AppCompatActivity() {
             @Suppress("DEPRECATION")
             window.decorView.systemUiVisibility = (
                 View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    or View.SYSTEM_UI_FLAG_FULLSCREEN
                     or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                     or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 )
         }
+        // Make status bar background match the game
+        window.statusBarColor = android.graphics.Color.BLACK
     }
 
     @Deprecated("Use onBackPressedDispatcher")
     override fun onBackPressed() {
-        if (webView.canGoBack()) {
-            webView.goBack()
-        } else {
-            goBackToMenu()
+        val wv = activeWebView ?: run { goBackToMenu(); return }
+        // Check if a rules modal is open and close it instead of navigating back
+        wv.evaluateJavascript("""
+            (function() {
+                var modals = ['rulesModal', 'rules-modal'];
+                for (var i = 0; i < modals.length; i++) {
+                    var el = document.getElementById(modals[i]);
+                    if (el && (el.style.display === 'block' || el.style.display === 'flex')) {
+                        el.style.display = 'none';
+                        return 'closed';
+                    }
+                }
+                return 'none';
+            })()
+        """.trimIndent()) { result ->
+            if (result != "\"closed\"") {
+                goBackToMenu()
+            }
         }
     }
 
@@ -206,6 +244,8 @@ class GameActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         handler.removeCallbacks(hideFab)
+        webViews.values.forEach { it.destroy() }
+        webViews.clear()
         super.onDestroy()
     }
 
@@ -240,14 +280,17 @@ class GameActivity : AppCompatActivity() {
     }
 
     companion object {
-        /**
-         * Injected JavaScript that intercepts <a download> blob clicks
-         * and routes them through the Android bridge for sharing.
-         */
         private const val INJECTED_JS = """
             (function() {
-                if (window.__androidCsvBridgeInstalled) return;
-                window.__androidCsvBridgeInstalled = true;
+                if (window.__androidBridgeInstalled) return;
+                window.__androidBridgeInstalled = true;
+
+                // Add top padding so game content doesn't hide behind the back button
+                var style = document.createElement('style');
+                style.textContent = 'body { padding-top: 56px !important; }';
+                document.head.appendChild(style);
+
+                // Intercept blob download links for CSV export
                 var _origClick = HTMLAnchorElement.prototype.click;
                 HTMLAnchorElement.prototype.click = function() {
                     if (this.hasAttribute('download') && this.href && this.href.startsWith('blob:')) {

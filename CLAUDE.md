@@ -34,8 +34,10 @@ Release signing uses `signing.properties` (gitignored) with `STORE_FILE`, `STORE
 
 ## Architecture
 
-- **Two Activities** (both `singleTop`): `MainActivity` (game list with RecyclerView) → `GameActivity` (full-screen WebView). Navigation uses `FLAG_ACTIVITY_REORDER_TO_FRONT` to preserve game state — GameActivity is not finished when returning to menu
-- **Back button**: Auto-hides after 3s with fade-out, reappears on tap. Left-edge swipe also returns to menu
+- **Two Activities** (both `singleTop`): `MainActivity` (game list with RecyclerView) → `GameActivity` (per-game WebViews in a FrameLayout container). Navigation uses `FLAG_ACTIVITY_REORDER_TO_FRONT` to preserve game state — GameActivity is not finished when returning to menu
+- **Per-game WebViews**: Each game gets its own WebView instance stored in a `Map<String, WebView>`. Switching games hides the current WebView and shows (or creates) the one for the target game, preserving full JS game state across game switches
+- **Back button**: Auto-hides after 3s with fade-out, reappears on tap. Left-edge swipe also returns to menu. Android back button checks for open rules modals (`rulesModal` / `rules-modal`) via JS and closes them instead of navigating away
+- **Injected CSS/JS**: All games receive `padding-top: 56px` via injected CSS so content doesn't hide behind the back FAB button. Status bar stays visible (black) while navigation bar is hidden
 - **GameRepository**: Copies bundled HTML from `assets/games/` to internal storage; re-copies when `versionCode` changes; handles GitHub update downloads
 - **GameInfo**: Hardcoded game catalog with titles, descriptions, and language/mode variants. Remote variants use `GameVariant.url` to open in system browser
 - **GameAdapter**: RecyclerView adapter rendering game cards with equally-sized colored variant buttons
