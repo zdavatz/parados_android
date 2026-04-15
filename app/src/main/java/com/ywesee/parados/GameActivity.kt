@@ -35,8 +35,9 @@ class GameActivity : AppCompatActivity() {
     private val hideDelay = 3000L
     private var currentFilename: String? = null
 
-    // One WebView per game, keyed by filename
-    private val webViews = mutableMapOf<String, WebView>()
+    // WebViews live in ParadosApp so they survive activity destruction
+    private val webViews: MutableMap<String, WebView>
+        get() = (application as ParadosApp).webViews
     private var activeWebView: WebView? = null
 
     // CSV import: file chooser callback
@@ -85,8 +86,19 @@ class GameActivity : AppCompatActivity() {
         fabBack = findViewById(R.id.fab_back)
         fabBack.setOnClickListener { goBackToMenu() }
 
+        // Restore last game filename if activity was recreated
+        val restoredFilename = savedInstanceState?.getString("currentFilename")
+        if (restoredFilename != null && intent.getStringExtra("filename") == null) {
+            intent.putExtra("filename", restoredFilename)
+        }
+
         loadGame(intent)
         handler.postDelayed(hideFab, hideDelay)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        currentFilename?.let { outState.putString("currentFilename", it) }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -109,15 +121,24 @@ class GameActivity : AppCompatActivity() {
         activeWebView?.visibility = View.GONE
 
         // Reuse existing WebView or create a new one
+        var isNew = false
         val webView = webViews.getOrPut(filename) {
-            createWebView().also { wv ->
-                container.addView(wv, 0, FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.MATCH_PARENT
-                ))
-                val repository = GameRepository(this)
-                wv.loadUrl(repository.getGameUri(filename))
-            }
+            isNew = true
+            createWebView()
+        }
+
+        // Ensure WebView is attached to this activity's container
+        if (webView.parent != container) {
+            (webView.parent as? FrameLayout)?.removeView(webView)
+            container.addView(webView, 0, FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+            ))
+        }
+
+        if (isNew) {
+            val repository = GameRepository(this)
+            webView.loadUrl(repository.getGameUri(filename))
         }
 
         webView.visibility = View.VISIBLE
@@ -126,7 +147,7 @@ class GameActivity : AppCompatActivity() {
 
     @SuppressLint("SetJavaScriptEnabled", "ClickableViewAccessibility")
     private fun createWebView(): WebView {
-        val wv = WebView(this)
+        val wv = WebView(applicationContext)
         wv.settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true
@@ -170,7 +191,7 @@ class GameActivity : AppCompatActivity() {
                 if (e1 == null) return false
                 val dx = e2.x - e1.x
                 val dy = e2.y - e1.y
-                if (e1.x < 80 && dx > 120 && abs(dy) < abs(dx) && velocityX > 300) {
+                if (e1.x < 50 && dx > 200 && abs(dy) < abs(dx) * 0.5 && velocityX > 500) {
                     goBackToMenu()
                     return true
                 }
@@ -244,8 +265,11 @@ class GameActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         handler.removeCallbacks(hideFab)
-        webViews.values.forEach { it.destroy() }
-        webViews.clear()
+        // Detach WebViews from container but do NOT destroy them —
+        // they live in ParadosApp and must survive activity recreation
+        container.removeAllViews()
+        // Re-add the FAB to the container is not needed since the whole layout is gone
+        activeWebView = null
         super.onDestroy()
     }
 
