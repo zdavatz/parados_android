@@ -166,6 +166,31 @@ class GameActivity : AppCompatActivity() {
                 super.onPageFinished(view, url)
                 view?.evaluateJavascript(INJECTED_JS, null)
             }
+
+            override fun shouldOverrideUrlLoading(
+                view: WebView?,
+                request: android.webkit.WebResourceRequest?
+            ): Boolean {
+                val uri = request?.url ?: return false
+                val scheme = uri.scheme ?: return false
+                if (scheme == "file") return false
+                if (scheme == "http" || scheme == "https") {
+                    val host = uri.host ?: return false
+                    val external = host == "wa.me" ||
+                        host.endsWith("whatsapp.com") ||
+                        host == "apps.apple.com" ||
+                        host == "play.google.com"
+                    if (!external) return false
+                }
+                return try {
+                    startActivity(Intent(Intent.ACTION_VIEW, uri).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    })
+                    true
+                } catch (e: Exception) {
+                    false
+                }
+            }
         }
 
         wv.webChromeClient = object : WebChromeClient() {
