@@ -32,6 +32,10 @@ AAB output: `app/build/outputs/bundle/release/app-release.aab`
 
 Release signing uses `signing.properties` (gitignored) with `STORE_FILE`, `STORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`. The keystore file and Google Play service account JSON (`parados.json`) are also gitignored. The `apkup_bundle` script builds the AAB and uploads via `android-bundle-uploader` directly as a completed production release (no manual approval needed in Play Console).
 
+## Play Store Listing
+
+Store listing texts (title, short description, full description) live in `play_listing/<locale>/` (one file each: `title.txt`, `short_description.txt`, `full_description.txt`). Supported locales: `de-DE`, `en-US`. Limits: title 30 chars, short 80 chars, full 4000 chars — enforced by `update_listing.py`. To push: `python3 update_listing.py --dry-run` to preview, then `python3 update_listing.py` to commit. Uses the same `parados.json` service account as the bundle upload. The script creates an edit via `androidpublisher.edits.insert`, calls `edits.listings.update` per locale, and commits with `edits.commit` — fully automated, no Play Console UI needed. Title is intentionally identical in both locales: "Parados - Think Ahead!"
+
 ## Architecture
 
 - **Two Activities** (both `singleTop`): `MainActivity` (game list with RecyclerView) → `GameActivity` (per-game WebViews in a FrameLayout container). Navigation uses `FLAG_ACTIVITY_REORDER_TO_FRONT` to preserve game state — GameActivity is not finished when returning to menu

@@ -1,0 +1,26 @@
+Parados is a collection of board games invented, tested, and refined by Walter Prossnitz over decades. They are unlike anything you've played — and all run offline on your device.
+
+▸ The Impatient Kangaroo
+Kangy the kangaroo must collect food and water for her family. On a grid, she jumps symmetrically over dishes — like a catapult. Before every jump you may move one dish by one square. Sounds simple? Try it. The 21st century successor to Rushhour. With Level mode, Random mode, Editor and Replay. Available in five languages.
+
+▸ MAKA LAINA
+Two players collect discs on a 12×12 board. Six colors with values from 1 to 6. But beware: drawing a six renders all further discs of that color worthless. A one gives you an extra turn. Total score doesn't matter — whoever dominates the most colors wins. Strategy, foresight, bluff. Plan from the get-go, stay flexible.
+
+▸ Divided Loyalties
+Connect 4 — but with six colors and an 11×11 grid. Players place tiles and build bridges. A tile can be loyal in one direction and disloyal in another. Conflict, diplomacy, connections.
+
+▸ Where's that elbow?
+A memory game for 1 to 4 players, ages 7+. Players flip cards and build a complete body — from the middle outward or from the extremities inward. Four modes: Classic, Reverse, Mixed. Body parts come in green, orange, purple, and turquoise. Now where was that green elbow again?
+
+▸ Capovolto
+Othello on steroids. Place 18 polyominoes, then place numbered discs. 4-disc lines flip. Your opponent's last value determines your direction.
+
+▸ Democracy in Space
+Area majority based on the Electoral College concept. Local (pass-and-play) or remote (online).
+
+▸ Rainbow Blackjack
+Build towers, reach 21, mix colors. With jokers. Local and remote.
+
+All games run offline. For online multiplayer variants, your browser opens (PeerJS/WebRTC requires HTTPS).
+
+More info: game.ywesee.com/parados

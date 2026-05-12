@@ -1,0 +1,26 @@
+Parados ist eine Sammlung von Brettspielen, die Walter Prossnitz über Jahrzehnte erfunden, getestet und verfeinert hat. Sie sind anders als alles, was Sie kennen — und alle laufen offline auf Ihrem Gerät.
+
+▸ The Impatient Kangaroo (Das ungeduldige Känguru)
+Kangy das Känguru muss Futter und Wasser für ihre Familie sammeln. Auf einem Gitter springt sie symmetrisch über Schüsseln — wie ein Katapult. Vor jedem Sprung dürfen Sie eine Schüssel um ein Feld verschieben. Klingt einfach? Probieren Sie es. Der Nachfolger von Rushhour im 21. Jahrhundert. Mit Level-Modus, Zufallsmodus, Editor und Replay. In fünf Sprachen verfügbar.
+
+▸ MAKA LAINA
+Zwei Spieler sammeln Scheiben auf einem 12×12-Brett. Es gibt 6 Farben in den Werten 1 bis 6. Doch Vorsicht: Wer eine Sechs zieht, macht alle weiteren Scheiben dieser Farbe wertlos. Eine Eins gibt einen Extra-Zug. Es zählt nicht die Gesamtpunktzahl — wer die meisten Farben dominiert, gewinnt. Strategie, Voraussicht, Bluff. Planen Sie von Anfang an, bleiben Sie flexibel.
+
+▸ Divided Loyalties
+Vier gewinnt — aber mit sechs Farben und 11×11 Feldern. Spieler legen Plättchen und bauen Brücken. Ein Plättchen kann in eine Richtung loyal sein und in eine andere illoyal. Konflikt, Diplomatie, Verbindungen.
+
+▸ Where's that elbow?
+Ein Memory-Spiel für 1 bis 4 Spieler, ab 7 Jahren. Spieler decken Karten auf und bauen einen kompletten Körper — von der Mitte nach aussen oder von den Extremitäten nach innen. Vier Modi: Klassisch, Umgekehrt, Gemischt. Grüne, orange, lila und türkise Körperteile. Wo war der grüne Ellbogen nochmal?
+
+▸ Capovolto
+Othello auf Steroiden. 18 Polyominos legen, dann nummerierte Scheiben platzieren. 4er-Linien drehen sich um. Der letzte Wert des Gegners bestimmt Ihre Richtung.
+
+▸ Democracy in Space
+Flächenmehrheit basierend auf dem Electoral College. Lokal (Pass-and-Play) oder Remote (online) spielbar.
+
+▸ Rainbow Blackjack
+Türme bauen, 21 erreichen, Farben mischen. Mit Jokern. Lokal und Remote.
+
+Alle Spiele laufen offline. Für Online-Multiplayer-Varianten öffnet sich der Browser (PeerJS/WebRTC benötigt HTTPS).
+
+Mehr Informationen: game.ywesee.com/parados

@@ -69,6 +69,34 @@ Upload to Google Play (publishes directly as a production release):
 ./apkup_bundle
 ```
 
+## Play Store Listing
+
+Title, short description, and full description for each locale are stored in `play_listing/<locale>/`:
+
+```
+play_listing/
+├── de-DE/
+│   ├── title.txt              (max 30 chars)
+│   ├── short_description.txt  (max 80 chars)
+│   └── full_description.txt   (max 4000 chars)
+└── en-US/
+    ├── title.txt
+    ├── short_description.txt
+    └── full_description.txt
+```
+
+Push listings to Google Play:
+
+```bash
+# Dry run — validates lengths and prints what would be uploaded
+python3 update_listing.py --dry-run
+
+# Push live
+python3 update_listing.py
+```
+
+Uses the same `parados.json` service account as the bundle upload.
+
 ## Lizenz
 
 GPLv3 — siehe [LICENSE](LICENSE)
