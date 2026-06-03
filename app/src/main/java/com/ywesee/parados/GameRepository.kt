@@ -48,27 +48,22 @@ class GameRepository(private val context: Context) {
      * Returns the number of files successfully updated.
      */
     fun updateFromGithub(): Int {
-        val baseUrl = "https://raw.githubusercontent.com/zdavatz/parados/main/"
         var updated = 0
+        // Start from the known set, then let the freshly-downloaded index.html
+        // ADD any newly-linked games so a brand-new game is fully OTA (Walter,
+        // 2026-06-03): drop the file in the web repo + link it in index.html and
+        // the next update pulls it — no app rebuild needed.
+        val filenames = GameInfo.allFilenames.toMutableSet()
 
-        for (filename in GameInfo.allFilenames) {
-            try {
-                val url = URL("$baseUrl$filename")
-                val connection = url.openConnection() as HttpURLConnection
-                connection.connectTimeout = 10_000
-                connection.readTimeout = 15_000
-                connection.requestMethod = "GET"
+        val indexHtml = downloadAndSave("index.html")
+        if (indexHtml != null) {
+            updated++
+            filenames.remove("index.html")
+            filenames.addAll(linkedFiles(indexHtml))
+        }
 
-                if (connection.responseCode == 200) {
-                    val content = connection.inputStream.bufferedReader().readText()
-                    val file = File(gamesDir, filename)
-                    file.writeText(content)
-                    updated++
-                }
-                connection.disconnect()
-            } catch (_: Exception) {
-                // Skip files that fail to download
-            }
+        for (filename in filenames) {
+            if (downloadAndSave(filename) != null) updated++
         }
 
         if (updated > 0) {
@@ -78,6 +73,37 @@ class GameRepository(private val context: Context) {
         }
 
         return updated
+    }
+
+    /** Download one file into gamesDir; returns its text body on success (so
+     *  index.html can be parsed for links), null otherwise. */
+    private fun downloadAndSave(filename: String): String? {
+        return try {
+            val connection = URL("$GITHUB_BASE$filename").openConnection() as HttpURLConnection
+            connection.connectTimeout = 10_000
+            connection.readTimeout = 15_000
+            connection.requestMethod = "GET"
+            val body = if (connection.responseCode == 200) {
+                connection.inputStream.bufferedReader().readText()
+            } else null
+            connection.disconnect()
+            if (body != null) File(gamesDir, filename).writeText(body)
+            body
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    companion object {
+        private const val GITHUB_BASE = "https://raw.githubusercontent.com/zdavatz/parados/main/"
+        private val LINK_REGEX = Regex("href\\s*=\\s*\"([^\"]+\\.(?:html|csv))\"", RegexOption.IGNORE_CASE)
+
+        /** Local game/tool files an index.html links to (no scheme, not absolute). */
+        fun linkedFiles(html: String): List<String> =
+            LINK_REGEX.findAll(html)
+                .map { it.groupValues[1] }
+                .filter { !it.contains("://") && !it.startsWith("/") && !it.startsWith("#") }
+                .toList()
     }
 
     fun getLastUpdateTime(): Long {
