@@ -31,12 +31,14 @@
         android:visibility="gone"
         android:indeterminateTint="#FFD700" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/games_recycler"
+    <!-- Landing page is the SHARED index.html (same file as web / iOS /
+         desktop), refreshed by the toolbar update action.  Taps on its
+         cards are intercepted in MainActivity. -->
+    <WebView
+        android:id="@+id/menu_webview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp"
-        android:clipToPadding="false"
+        android:background="#263238"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
